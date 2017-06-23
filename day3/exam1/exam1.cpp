@@ -169,6 +169,88 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ReleaseDC(hWnd, hdc);
 		}
 		break;
+	case WM_LBUTTONDOWN:
+	{
+		TCHAR szBuf[256];
+		wsprintf(szBuf, L"좌버튼다운위치: %d,%d"
+			, LOWORD(lParam)		//x
+			, HIWORD(lParam));	//y
+		OutputDebugString(szBuf);
+		//PAINTSTRUCT ps;
+		//HDC hdc = BeginPaint(hWnd, &ps);
+		HDC hdc = GetDC(hWnd);
+
+
+		Rectangle(hdc, 100, 100+50, 300, 150+50);
+		TextOut(hdc, 120, 120+50, szBuf, wcslen(szBuf));
+
+		ReleaseDC(hWnd, hdc);
+	}
+	case WM_LBUTTONUP:
+	{
+		TCHAR szBuf[256];
+		wsprintf(szBuf, L"좌버튼업위치: %d,%d"
+			, LOWORD(lParam)		//x
+			, HIWORD(lParam));	//y
+		OutputDebugString(szBuf);
+		
+		HDC hdc = GetDC(hWnd);
+
+
+		Rectangle(hdc, 100, 100+100, 300, 150+100);
+		TextOut(hdc, 120, 120+100, szBuf, wcslen(szBuf));
+
+		ReleaseDC(hWnd, hdc);
+	}
+	break;
+	case WM_KEYDOWN:
+	{
+		TCHAR szBuf[256];
+		wsprintf(szBuf, L"키보드: %d,%d"
+			, LOWORD(lParam)		//x
+			, HIWORD(lParam));	//y
+		OutputDebugString(szBuf);
+
+		HDC hdc = GetDC(hWnd);
+
+
+		Rectangle(hdc, 400, 100, 500, 150);
+		TextOut(hdc, 420, 120, szBuf, wcslen(szBuf));
+
+		ReleaseDC(hWnd, hdc);
+	}
+	break;
+	case WM_KEYUP:
+	{
+		TCHAR szBuf[256];
+		wsprintf(szBuf, L"키보드: %d,%d"
+			, LOWORD(lParam)		//x
+			, HIWORD(lParam));	//y
+		OutputDebugString(szBuf);
+
+		HDC hdc = GetDC(hWnd);
+
+
+		Rectangle(hdc, 400, 100+100, 500, 150+100);
+		TextOut(hdc, 420, 120+100, szBuf, wcslen(szBuf));
+
+		ReleaseDC(hWnd, hdc);
+	}
+	case WM_CHAR: 
+	{
+		TCHAR szBuf[256];
+		wsprintf(szBuf,L"키코드 : %d \n",
+			wParam);
+		HDC hdc = GetDC(hWnd);
+
+
+		Rectangle(hdc, 400, 500, 500, 600);
+		TextOut(hdc, 420, 520, szBuf, wcslen(szBuf));
+
+		ReleaseDC(hWnd, hdc);
+	}
+	break;
+	
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
