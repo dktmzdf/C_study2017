@@ -156,6 +156,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SetWindowText(hEdit,L"");
 				OutputDebugString(szBuf);
 
+				HDC hdc = GetDC(hWnd);
+
+				TCHAR szBuf2[256];
+				wsprintf(szBuf2, L"æ»≥Á«œººø‰ %s ¥‘", szBuf);
+				TextOut(hdc, 10, 200, szBuf2, wcslen(szBuf2));
+
+				ReleaseDC(hWnd,hdc);
 			}
 			break;
             default:
