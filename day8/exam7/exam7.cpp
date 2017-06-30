@@ -3,7 +3,8 @@
 
 #include "stdafx.h"
 
-void assign(int *test)//포인터가 없으면 값을 복사함 (call of value) 포인터가 있으면 주소를 복사함 (call of reference)
+void assign(int *test)//포인터가 없으면 값을 복사함 (call of value) 포인터가 있으면 주소를 value로 복사함 (call of value)
+//call of reference는 c에는 없다
 {
 	*test = 100;
 }
