@@ -6,14 +6,14 @@
 
 int main()
 {
-	char *strItems = "pike,plate armor,lather grove,sword,dager";
+	char *strItems = "pike,plate armor,lather armor,lather hemet,lather grove,sword,dager";
 
 	int nIndexTable[32] = { 0, };
 
 	int nIndex = 0, nCount = 0, i;
 	printf("select index : ");
 	scanf("%d", &nIndex);
-
+	nIndex--;
 
 	for (i = 0; strItems[i] != 0x00; i++)
 	{
@@ -23,11 +23,23 @@ int main()
 		}
 
 	}
-	
 	char *pTemp = &(strItems[nIndexTable[nIndex]]);
-	for (i=0; i< nIndexTable[nIndex+1] - nIndexTable[nIndex]; i++)
+	if (nIndex <nCount) 
 	{
-		if(pTemp[i] != ',') printf("%c",pTemp[i]);
+		char *pTemp = &(strItems[nIndexTable[nIndex]]);
+		for (i = 0; i < nIndexTable[nIndex + 1] - nIndexTable[nIndex]; i++)
+		{
+
+			if (pTemp[i] != ',') printf("%c", pTemp[i]);
+		}
+	}
+	if (nIndex == nCount) 
+	{
+		for (i = 0 ; pTemp[i] != 0x00; i++)
+		{
+
+			if (pTemp[i] != ',') printf("%c", pTemp[i]);
+		}
 	}
 
 	/*
