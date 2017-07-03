@@ -143,10 +143,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
 	case WM_CREATE:
 	{
-		mywin32_engine::makeMiniEditBox(hWnd, 0, 0, 3001);
+		mywin32_engine::makeEditBox(hWnd, 0, 0, 200,3001);
 //		mywin32_engine::makeMiniButton(hWnd, 110, 0, 4001, L"OK");
-		mywin32_engine::makeMiniEditBox(hWnd, 0, 100, 3002);
-		mywin32_engine::makeMiniEditBox(hWnd, 0, 200, 3003);
+		mywin32_engine::makeMiniEditBox(hWnd, 0, 25, 3002);
+		mywin32_engine::makeMiniEditBox(hWnd, 0, 50, 3003);
 	}
 		break;
     case WM_COMMAND:
