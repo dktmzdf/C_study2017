@@ -35,7 +35,7 @@ const int g_nTileSize = 16;
 const int g_nTileXCount = 8;
 void drawTile(Graphics *pGrp,Image *pImgBasicTile,int nPosX, int nPosY, int nTileIndex) {
 	//int nTileIndex 타일 위치
-	pGrp->DrawImage(pImgBasicTile, nPosX, nPosY,
+	pGrp->DrawImage(pImgBasicTile, Rect(nPosX, nPosY, g_nTileSize, g_nTileSize),
 		g_nTileSize *  (nTileIndex %  g_nTileXCount), //원본의 X 위치
 		g_nTileSize *  (nTileIndex / g_nTileXCount), //원본의 Y 위치
 		g_nTileSize, g_nTileSize, //
