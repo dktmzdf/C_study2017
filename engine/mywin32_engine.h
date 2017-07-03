@@ -5,7 +5,7 @@ namespace mywin32_engine {
 		int Buffer2DoubleArray(TCHAR *szBuf,double *pResult)
 		{
 			int nCount = 0;
-			TCHAR szTemp[256];
+
 			TCHAR *pwc;
 			pwc = wcstok(szBuf, L", ");
 			pResult[nCount++] = _wtof(pwc);
@@ -19,21 +19,25 @@ namespace mywin32_engine {
 			return nCount;
 		}
 	}
-
-	void makeMiniEditBox(HWND hWnd, int xPos, int yPos, int nHandle)
+	HWND makeTextBox(HWND hWnd, int xPos, int yPos, int nWdith, int nHeight, int nHandle)
 	{
-		CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_BORDER,
+		return CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER,
+			xPos, yPos, nWdith, nHeight, hWnd, (HMENU)nHandle, hInst, NULL);
+	}
+	HWND makeMiniEditBox(HWND hWnd, int xPos, int yPos, int nHandle)
+	{
+		return CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_BORDER,
 			xPos, yPos, 100, 25, hWnd, (HMENU)nHandle, hInst, NULL);
 	}
-	void makeEditBox(HWND hWnd, int xPos, int yPos,int nWdith, int nHandle)
+	HWND makeEditBox(HWND hWnd, int xPos, int yPos,int nWdith, int nHandle)
 	{
-		CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_BORDER,
+		return CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | WS_BORDER,
 			xPos, yPos, nWdith, 25, hWnd, (HMENU)nHandle, hInst, NULL);
 	}
-	void makeMiniButton(HWND hWnd, int xPos, int yPos, int nHandle, TCHAR *pszLabel)
+	HWND makeMiniButton(HWND hWnd, int xPos, int yPos, int nHandle, TCHAR *pszLabel)
 	{
 
-		CreateWindow(L"button", pszLabel, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		return CreateWindow(L"button", pszLabel, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 			xPos, yPos, 100, 25, hWnd, (HMENU)nHandle, hInst, NULL);
 	}
 	int GetControlValueInt(HWND hWnd, int nHandle) {
