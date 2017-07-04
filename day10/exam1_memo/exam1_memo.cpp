@@ -289,7 +289,7 @@ INT_PTR CALLBACK procMemoDel(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 			while (1)
 			{
 				int i=0;
-				ptrStartAt++;
+				//ptrStartAt + ;
 				if (*ptrStartAt == ',') 
 				{
 					if (i == nIndex) 
