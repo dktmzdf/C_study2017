@@ -29,7 +29,7 @@ int main()
 
 	//문자열 비교sss
 	printf("%d \n", wcslen(pwTest));
-	strcmp();
+	//strcmp();
     return 0;
 }
 
