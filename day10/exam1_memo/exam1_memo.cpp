@@ -126,7 +126,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 #include "../../engine/mywin32_engine.h"
 TCHAR g_szDBBufferDB[1024] = L"helloworldgoodmornig";
-int g_nTableLength[256] = { 5,5,4,7};
+int g_nTableLength[256] = { 5,5,4,6};
 int g_nTableStartIndex[256] = { 0,5,10,14 };
 int g_nStringCount = 4;
 TCHAR *g_ptrStartBuffer;
@@ -249,12 +249,14 @@ INT_PTR CALLBACK procMemoIns(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 			TCHAR *ptrStartAt = &(g_szDBBufferDB[g_nTailIndex]);
 			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_INS), szBuf, 256);
 			TCHAR *ptrSrc = szBuf;
-			ptrStartAt--;
-			lstrcpyW(ptrStartAt,ptrSrc);
+			//ptrStartAt--;
+			//lstrcpyW(ptrStartAt,ptrSrc);
 
-			g_nTailIndex += wcslen(szBuf);
+			wcscat(g_szDBBufferDB, szBuf);
+			
 			g_nTableStartIndex[g_nStringCount] = g_nTailIndex;
 			g_nTableLength[g_nStringCount] = wcslen(szBuf);
+			g_nTailIndex += wcslen(szBuf);
 			g_nStringCount++;
 			
 			SetWindowText(g_hOutputLogBox, g_szDBBufferDB);
@@ -284,24 +286,38 @@ INT_PTR CALLBACK procMemoDel(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 		{
 			TCHAR szBuf[256];
 			TCHAR *ptrStartAt = g_szDBBufferDB;
-			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_INS), szBuf, 256);
+			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_DEL), szBuf, 256);
 			int nIndex = _wtoi(szBuf);
-			while (1)
-			{
-				int i=0;
-				//ptrStartAt + ;
-				if (*ptrStartAt == ',') 
-				{
-					if (i == nIndex) 
-					{
-
-					}
-					else 
-					{
-
-					}
-				}
+			//g_nTailIndex -= g_nTableLength[nIndex];
+			g_nStringCount--;
+			for (int i = nIndex; i < g_nStringCount; i++) {
+				g_nTableStartIndex[nIndex] = g_nTableStartIndex[nIndex+1];
+				g_nTableLength[nIndex] = g_nTableLength[nIndex+1];
 			}
+			
+			/*
+			TCHAR szBuf[256];
+			TCHAR *ptrStartAt = g_szDBBufferDB;
+			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_DEL), szBuf, 256);
+			int nIndex = _wtoi(szBuf);
+			
+			TCHAR *ptrTempBuf = &(ptrStartAt[g_nTableStartIndex[nIndex]]);
+			ptrStartAt += g_nTableStartIndex[nIndex - 1];
+			lstrcpyW(ptrStartAt, ptrTempBuf);
+			ptrStartAt[g_nTailIndex] = 0x00;
+
+			for (int i = nIndex-1; i < 255; i++) {
+				if (i != 0) {
+					g_nTableStartIndex[i] -= g_nTableStartIndex[nIndex - 1];
+					//g_nTableStartIndex[i] -= g_nTableStartIndex[i + 1];
+				}
+				g_nTableLength[i] = g_nTableLength[i + 1];
+				
+				
+			}
+			g_nTailIndex -= g_nTableLength[nIndex - 1];
+			g_nStringCount--;
+			*/
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
