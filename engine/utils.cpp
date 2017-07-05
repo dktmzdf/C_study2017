@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 TCHAR g_szaMsgLog[1024][256];
 int g_nMsgLogTailIndex = 0;
@@ -7,7 +7,7 @@ void win32_Printf(HWND hWnd, TCHAR *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
-	//swprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, L"%d ¹ø ¸Ş¾¾Áö", g_nMsgLogTailIndex);
+	//swprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, L"%d Â¹Ã¸ Â¸ÃÂ¾Â¾ÃÃ¶", g_nMsgLogTailIndex);
 	vswprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, fmt, ap);
 	g_nMsgLogTailIndex++;
 	va_end(ap);
