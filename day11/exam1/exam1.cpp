@@ -146,6 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_TEST_2:
 				test2(hWnd);
 				break;
+
 			case IDM_TEST_3:
 				testProc2(hWnd);
 				break;
