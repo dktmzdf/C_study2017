@@ -152,25 +152,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 	case WM_CREATE: 
 	{
-		SetTimer(hWnd, 1, 100, NULL);
+		SetTimer(hWnd, 1, 1, NULL);
 
 	}
 	break;
 	case WM_TIMER:
 	{
-		int xPos = rand() % 500;
+		int xPos = rand() % 1000;
 		int yPos = rand() % 500;		
 		int xSize = 10 + (rand() % 100);
 		int ySize = 10 + (rand() % 100);
 		int RValue = rand() % 256;
 		int GValue = rand() % 256;
 		int BValue = rand() % 256;
+		int selectSharp = rand() % 2;
+
 		HDC hdc = GetDC(hWnd);
 		HBRUSH myBrush, oldBrush;
 		myBrush = (HBRUSH)CreateSolidBrush(RGB(RValue, GValue, BValue));
 		oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
-
-		Rectangle(hdc, xPos, yPos, xSize, ySize);
+		if(selectSharp == 0)	Rectangle(hdc, xPos, yPos, xSize, ySize);
+		else if(selectSharp == 1)	Ellipse(hdc, xPos, yPos, xSize, ySize);
 		SelectObject(hdc, oldBrush);
 		DeleteObject(myBrush);
 		ReleaseDC(hWnd,hdc);

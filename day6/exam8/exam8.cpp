@@ -151,7 +151,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			for (i = 0; i < 2000; i++) {
 				for (j = 0; j < 1000; j++) {
 					
-					SetPixel(hdc, 10 + i, 10 + j, RGB(i%256, j % 256,(i*j)%256));
+					SetPixel(hdc, 10 + i, 10 + j, RGB((i*j) % 256, i,j));
 				}
 			}
             EndPaint(hWnd, &ps);

@@ -157,9 +157,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			myFont = CreateFont(30,0,0,0,0,0,0,0,HANGEUL_CHARSET,0,0,0,0,L"±Ã¼­");
 			oldFont = (HFONT)SelectObject(hdc,myFont);
 
-			Rectangle(hdc, 100, 100, 500,200);
+			Rectangle(hdc, 100, 100, 600,400);
 
-			TCHAR szMsg[] = L"Hello, World!";
+			TCHAR szMsg[] = L"¹Ú  ±Ô  Áø";
 			SetTextColor(hdc,RGB(0,255,0));
 			SetBkMode(hdc,TRANSPARENT);
 			TextOut(hdc,150,150,szMsg, wcslen(szMsg));
@@ -168,6 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DeleteObject(myFont);
 			SelectObject(hdc, oldBrush);
 			DeleteObject(myBrush);
+
 
             EndPaint(hWnd, &ps);
         }

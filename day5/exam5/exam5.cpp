@@ -183,6 +183,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TextOut(hdc, 10, 210, szBuf, wcslen(szBuf));
 			swprintf_s(szBuf, 256, L">>%+10d%d<<", 1000);
 			TextOut(hdc, 10, 230, szBuf, wcslen(szBuf));
+
             EndPaint(hWnd, &ps);
         }
         break;

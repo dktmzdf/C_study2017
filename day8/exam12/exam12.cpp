@@ -43,7 +43,7 @@ void drawTile(Graphics *pGrp,Image *pImgBasicTile,int nPosX, int nPosY, int nTil
 }
 
 int g_MapRoom[] = {
-	2, 2, 2, 2, 2, 2, 2, 2,
+	3, 2, 2, 2, 2, 2, 2, 3,
 	1,14,14,14,14,14,14,3,
 	1,14,14,14,14,14,14,3,
 	1,14,14,31,14,14,14,3,

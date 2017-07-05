@@ -34,14 +34,21 @@ void GDIPLUS_LOOP(MSG &msg)
 		bool bQuit = false;
 		SolidBrush brushWhite(Color(255,255,255));
 		while (bQuit == false) {
-			if (PeekMessage(&msg,NULL,NULL,NULL,PM_REMOVE)) {//non-blocking
+
+			if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE)) {
+
 				if (msg.message == WM_QUIT) {
+
 					bQuit = true;
 
 				}
+
 				TranslateMessage(&msg);
+
 				DispatchMessage(&msg);
+
 			}
+
 			else {
 				HDC hdc = GetDC(msg.hwnd);
 				Graphics graphics(hdc);
