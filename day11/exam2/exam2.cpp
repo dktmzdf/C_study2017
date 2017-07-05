@@ -127,6 +127,7 @@ extern void DisplayLog(HDC);
 extern void testProc1(HWND);
 extern void testProc2(HWND);
 extern void testProc3(HWND);
+extern void testProc4(HWND);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -145,6 +146,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			case IDM_TEST_3:
 				testProc3(hWnd);
+				break;
+			case IDM_TEST_4:
+				testProc4(hWnd);
 				break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
