@@ -16,3 +16,4 @@ void testProc4(HWND hWnd)
 	test1();
 	win32_Printf(hWnd, L"%d", a);
 }
+
