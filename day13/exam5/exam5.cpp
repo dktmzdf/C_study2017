@@ -28,7 +28,7 @@ int main()
 	memcpy((BYTE *)pVoid + 8 , &pMsg, 4);
 
 	
-	printf("%d %d\n", *((int *)(BYTE *)pVoid), *(int *)(BYTE *)pVoid + 4);
+	printf("%d %d\n", *((int *)((BYTE *)pVoid)), *(int *)((BYTE *)pVoid + 4));
 	printf("%s \n", *(char **)((BYTE *)pVoid + 8));
 	//void *aappa = (void *)malloc(sizeof(char) * 1024);
     return 0;
