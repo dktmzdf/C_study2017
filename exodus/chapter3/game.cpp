@@ -6,6 +6,7 @@
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
+
 int g_MapRooms[][64] = {
 	{
 		3, 0, 0, 0, 0, 0, 0, 3,
@@ -28,6 +29,20 @@ int g_MapRooms[][64] = {
 		2, 2, 2, 2, 2, 2, 2, 2
 	}
 };
+/*G  A  M  E  O  V  E  R
+6  0  12 4  14 2  14 16*/
+int g_MapChar[64] =
+{
+	3, 0, 0, 0, 0, 0, 0, 3,
+	1,14,14,14,14,14,14, 1,
+	1,14,14,14,14,14,14, 1,
+	1,14,14,14,14,14,14, 1,
+	1,14,14,14,14,14,14, 1,
+	1,14,14,14,14,14,14, 1,
+	1,14,14,14,14,14,14, 1,
+	2, 2, 2, 2, 2, 2, 2, 2
+};
+
 
 int g_MapAttrBlock[][64] = {
 	{
@@ -52,15 +67,27 @@ int g_MapAttrBlock[][64] = {
 	}
 };
 
-//캐릭터 리젠위치,열림스위치위치,탈출구 위치
-int g_StageInfo[][7] = {	
-	{3,3,5,3,7,2,31},
-	{1,1,5,3,7,5,47}
+//캐릭터 리젠위치,열림스위치위치,탈출구 위치,열쇠
+int g_StageInfo[][10] = {	
+	{
+		3,3,//캐릭터 리젠
+		5,3,//열림 스위치
+	7,2,31,//탈출구
+	6,6,70},//열쇠
+	{
+		1,1,
+		5,3,
+	7,5,47,
+	3,5,70}
 };
+
+int temp_g_nGameOver = 0;
 
 int g_nCurrentStage;
 int g_nPlayerXpos;
 int g_nPlayerYpos;
+int g_nPlayerKeyCount;
+
 
 //문열림 스위치 오브잭트 
 int g_nItemSwitchXpos = 5;
@@ -68,6 +95,11 @@ int g_nItemSwitchYpos = 3;
 int g_nItemSwitchSprIndex;
 int g_nItemSwitchStatus = 0; //0:스위치 멈춤, 1: 스위치 작동
 
+//열쇠 오브젝트
+int g_nItemKeyXpos;
+int g_nItemKeyYpos;
+int g_nItemKeySprIndex = 70;
+int g_nItemKeyStatus = 1; //0:키 없음, 1: 키 있음
 
 //탈출구 오브잭트
 int g_nExitPosX, g_nExitPosY;
@@ -90,21 +122,32 @@ void StartStage(int nStage)
 	g_nItemSwitchYpos = g_StageInfo[nStage][3];
 	g_nItemSwitchSprIndex = g_StageInfo[nStage][6];
 	g_nItemSwitchStatus = 0; //비활성 상태 
-
+	
 	//탈출구
 	g_nExitPosX = g_StageInfo[nStage][4];
 	g_nExitPosY = g_StageInfo[nStage][5];	
 	g_nExitStatus = 1;
+
+	//열쇠초기화
+	g_nItemKeyXpos = g_StageInfo[nStage][7];
+	g_nItemKeyYpos = g_StageInfo[nStage][8];
+	g_nItemKeySprIndex = g_StageInfo[nStage][9];
+	g_nPlayerKeyCount = 0;
+	g_nItemKeyStatus = 1;
 }
 
 void StartGame()
 {
 	g_nCurrentStage = 0;	
 	StartStage(g_nCurrentStage);
-
+	
 	g_dwGdiLoopFsm = 10; //랜더링 활성화 	
+	
 }
-
+void GameOver() 
+{
+	
+}
 int getMapTile(int (*pMap)[64],int mx, int my)
 {
 	return pMap[g_nCurrentStage][my * 8 + mx];
@@ -195,6 +238,7 @@ void GDIPLUS_Loop(MSG &msg)
 		Image imgBasicTile(L"../../res/basic_tile/basictiles.png"); // 16x16
 																	//Image imgPlayer(L"../../res/potrait/Pepper publish.png");// 24 x 32
 		Image imgPlayer(L"../../res/charater.png");// 64 x 64
+		Image imgChar(L"../../res/basic_tile/fontlarge.png");
 
 		while (!quit) {
 
@@ -222,12 +266,22 @@ void GDIPLUS_Loop(MSG &msg)
 						//스위치 로직 처리 
 						if (g_nItemSwitchStatus == 0) {
 							if (g_nItemSwitchXpos == g_nPlayerXpos &&
-								g_nItemSwitchYpos == g_nPlayerYpos
+								g_nItemSwitchYpos == g_nPlayerYpos &&
+								g_nPlayerKeyCount > 0
 								) {
 								g_nItemSwitchStatus = 1;
 								g_nExitStatus = 2;
+								g_nPlayerKeyCount--;
 								//setMapTile(g_MapAttrBlock, g_nExitPosX, g_nExitPosY, 0);
 								//setMapTile(g_MapRooms, g_nExitPosX, g_nExitPosY, 50);//문열림 표시 							
+							}
+						}
+						if (g_nItemKeyStatus == 1) {//열쇠를 주울수 있는 상태인가?
+							if (g_nItemKeyXpos == g_nPlayerXpos &&
+								g_nItemKeyYpos == g_nPlayerYpos
+								) {
+								g_nItemKeyStatus = 0;
+								g_nPlayerKeyCount++;
 							}
 						}
 
@@ -263,6 +317,7 @@ void GDIPLUS_Loop(MSG &msg)
 						//if (g_MapRooms[g_nCurrentStage][g_nPlayerYpos * 8 + g_nPlayerXpos] == 50) {
 						if(g_nPlayerXpos == g_nExitPosX && g_nPlayerYpos == g_nExitPosY) {							
 							g_nCurrentStage += 1; //다음판으로 
+							if (g_nCurrentStage == 2) temp_g_nGameOver = 1;
 							StartStage(g_nCurrentStage);
 						}
 					}
@@ -272,6 +327,8 @@ void GDIPLUS_Loop(MSG &msg)
 					{
 						Graphics graphics(hdc);
 						graphBackBuffer->FillRectangle(&brushBlack, rectScreen);
+
+						
 
 						//지도 그리기 
 						for (int ix = 0; ix < 8; ix++) {
@@ -287,19 +344,39 @@ void GDIPLUS_Loop(MSG &msg)
 							0, 64 * 2, 64, 64, //원본위치 
 							UnitPixel
 						);
-
+						
 						//각종 아이템 ,트리거, 기구물 그리기 
 						if (g_nItemSwitchStatus == 0) {
 							drawTileIndex(graphBackBuffer, &imgBasicTile, 
 								g_nItemSwitchXpos, g_nItemSwitchYpos, 
 								g_nItemSwitchSprIndex
 								);
+							
 						}
 						else {
 							//
 						}
-
-
+						//열쇠 랜더링
+						if (g_nItemKeyStatus == 1) {
+							drawTileIndex(graphBackBuffer, &imgBasicTile,
+								g_nItemKeyXpos, g_nItemKeyYpos,
+								g_nItemKeySprIndex
+							);
+						}
+						else {
+							//
+						}
+						if (temp_g_nGameOver == 1)
+						{
+							for (int ix = 0; ix < 8; ix++) {
+								for (int iy = 0; iy < 8; iy++) {
+									drawTile(graphBackBuffer,
+										&imgBasicTile,
+										ix, iy, g_MapRooms[g_nCurrentStage]);
+								}
+							}
+							
+						}
 
 						graphics.ScaleTransform(2.0, 2.0);
 						graphics.DrawImage(&bmpMem, rectScreen);
