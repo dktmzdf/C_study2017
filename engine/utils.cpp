@@ -1,4 +1,5 @@
-Ôªø#include "stdafx.h"
+#include "stdafx.h"
+#include "utils.h"
 
 TCHAR g_szaMsgLog[1024][256];
 int g_nMsgLogTailIndex = 0;
@@ -7,12 +8,21 @@ void win32_Printf(HWND hWnd, TCHAR *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
-	//swprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, L"%d ¬π√∏ ¬∏√û¬æ¬æ√Å√∂", g_nMsgLogTailIndex);
+	//swprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, L"%d π¯ ∏ﬁææ¡ˆ", g_nMsgLogTailIndex);
 	vswprintf_s(g_szaMsgLog[g_nMsgLogTailIndex], 256, fmt, ap);
 	g_nMsgLogTailIndex++;
 	va_end(ap);
 	InvalidateRect(hWnd, NULL, TRUE);
 }
+
+void win32_Scanf(const TCHAR *szBuf, const TCHAR *fmt,...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	vswscanf(szBuf, fmt, ap);
+	va_end(ap);
+}
+
 void DisplayLog(HDC hdc)
 {
 	for (int i = 0; i < g_nMsgLogTailIndex; i++) {
