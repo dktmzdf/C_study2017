@@ -3,20 +3,38 @@
 
 #include "stdafx.h"
 
-int sum_int(void *pA, void *pB,void *pResult) 
+void sum_int(void *pA, void *pB) 
 {
 	int a = *(int *)pA;
 	int b = *(int *)pB;
+
+	printf("%d \n", a + b);
 }
-int sum_double(void *pA, void *pB, void *pResult)
+void sum_double(void *pA, void *pB)
 {
 	double a = *(double *)pA;
 	double b = *(double *)pB;
-}
-int main()
-{
-	void(*fpSum)(void *,void *);
 
+	printf("%lf \n",a+b);
+}
+
+
+int main()
+{	
+	//함수 포인터의 배열 
+	void(*fpSum)(void *,void *);
+	int a = 3;
+	int b;
+	b = 4;
+
+	fpSum = sum_int;
+	fpSum(&a, &b);
+
+	double c, d;
+	c = 3.14;
+	d = 9.8;
+	fpSum = sum_double;
+	fpSum(&c, &d);
     return 0;
 }
 
