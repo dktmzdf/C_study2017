@@ -21,7 +21,7 @@ void Test_DrawPath(Graphics* graphBackBuffer,void *pParam)
 {
 	
 	Pen *pen;
-	pen = (Pen *)pParam;
+	pen = *(Pen **)pParam;
 
 	//패스 그리기 
 	GraphicsPath pathObj;
@@ -41,7 +41,7 @@ void Test_DrawRect(Graphics* graphBackBuffer,void *pParam)
 {
 	//Graphics* graphBackBuffer;
 	Pen *pen;
-	pen = (Pen *)pParam;
+	pen = *(Pen **)pParam;
 	graphBackBuffer->DrawRectangle(pen, Rect(160, 100, 50, 50));
 
 }
@@ -54,9 +54,9 @@ void Test_DrawCurve(Graphics* graphBackBuffer,void *pParam)
 	Pen *pen2;
 	Brush *brush;
 
-	pen = (Pen *)pParam;
-	pen2 = (Pen *)((BYTE *)pParam + 4);
-	brush = (Brush *)((BYTE *)pParam + 8);
+	pen = *(Pen **)pParam;
+	pen2 = *(Pen **)((BYTE *)pParam + 4);
+	brush = *(Brush **)((BYTE *)pParam + 8);
 
 	Point points[] = {
 		Point(50,50),
@@ -113,18 +113,32 @@ void GDIPLUS_Loop(MSG &msg)
 		void *pTemp;
 		BYTE buf_Test_DrawPath_Parm[256];
 		pTemp = buf_Test_DrawPath_Parm;
-		memcpy(pTemp, &penRed, 4);
+		{
+			DWORD nTemp = (DWORD)&penRed;//주소값을 때려박음
+			memcpy(pTemp, &nTemp, 4);
+		}
+
 		//memcpy(pTemp, graphBackBuffer, sizeof(Graphics *));
 		//memcpy((BYTE *)pTemp + sizeof(Graphics *), &penWhite, sizeof(Pen));
 
 		BYTE buf_Test_DrawRect_Parm[256];
 		pTemp = buf_Test_DrawRect_Parm;
-		memcpy(pTemp, &penRed, 4);
+		{
+			DWORD nTemp = (DWORD)&penRed;//주소값을 때려박음
+			memcpy(pTemp, &nTemp, 4);
+		}
 		
 		BYTE buf_Test_DrawCurve_Parm[256];
 		pTemp = buf_Test_DrawCurve_Parm;
-		pTemp = &penWhite;
-		((BYTE *)pTemp + 4) = &penRed;
+		{
+			DWORD nTemp = (DWORD)&penRed;//주소값을 때려박음
+			memcpy(pTemp, &nTemp, 4);
+			nTemp = (DWORD)&penRed;//주소값을 때려박음
+			memcpy(((BYTE *)pTemp + 4), &nTemp, 4);
+			nTemp = (DWORD)&brushGreen;//주소값을 때려박음
+			memcpy(((BYTE *)pTemp + 8), &nTemp, 4);
+		}
+		//((BYTE *)pTemp + 4) = &penRed;
 		//memcpy(pTemp, &penRed, 4);
 		//memcpy(((BYTE *)pTemp + 4), &penRed, 4);
 		//memcpy(((BYTE *)pTemp + 8), &brushGreen, 4);
