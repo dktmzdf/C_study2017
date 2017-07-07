@@ -18,132 +18,6 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 
-#include <windows.h>
-#include <objidl.h>
-#include <gdiplus.h>
-using namespace Gdiplus;
-#pragma comment (lib,"Gdiplus.lib")
-#include "../../engine/myGdiplusGame.h"
-using namespace myGdiplusGame;
-
-
-//y*8 + x 가 (x,y)위치
-int g_MapRoom1[] = {
-	3, 0, 0, 0, 0, 0, 0, 3,
-	1,14,14,14,14,14,14, 1,
-	1,14,14,14,14,14,14, 1,
-	1,14,14,14,14,14,14, 1,
-	1,14,14,14,14,14,14, 1,
-	1,14,14,14,14,14,14, 1,
-	1,14,14,14,14,14,14, 1,
-	2, 2, 2, 48, 2, 2, 2, 2
-};
-
-int *g_nowMap;
-int g_nPlayerXPos=3;
-int g_nPlayerYPos=3;
-
-DWORD g_dwGdiLoopFsm = 0; //루프상태제어
-void GDIPLUS_Loop(MSG &msg)
-{
-	//----------------------------------------------------------------------
-	//gdi plus 초기화 코드 
-	GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR           gdiplusToken;
-
-	// Initialize GDI+.
-	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-	//-----------------------------------------------------------------------
-
-	{
-		bool quit = false;
-		//gdiplus 가 셧다운 되기전에 객체들이 삭제되어야 하므로 일부러 지역변수선언을 한단계 내려서 사용했다.
-		Gdiplus::Rect rectScreen(0, 0, 320, 240);
-		Bitmap bmpMem(rectScreen.Width, rectScreen.Height);
-		Graphics* graphBackBuffer = Graphics::FromImage(&bmpMem);
-
-		Pen penRed(Color(255, 0, 0));
-		Gdiplus::SolidBrush brushBlack(Color(0, 0, 0));
-		Gdiplus::SolidBrush brushWhite(Color(255, 255, 255));
-		FontFamily  fontFamily(L"굴림");
-		Font        font(&fontFamily, 12, FontStyleRegular, UnitPixel);
-		static LONG prev_tick;
-		static SYSTEMTIME time;
-
-		Image imgBasicTile(L"../../res/basic_tile/basictiles.png");//16 x 16;
-		Image imgPlayer(L"../../res/potrait/charater.png");//크기 x64 y64
-
-		g_nowMap = g_MapRoom1;
-		while (!quit) {
-
-			if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT)
-					quit = true;
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			else {
-				switch (g_dwGdiLoopFsm)
-				{
-				case 0:
-					break;
-				case 10:
-				{
-					GetSystemTime(&time);
-					LONG time_ms = (time.wSecond * 1000) + time.wMilliseconds;
-					float fDelta = (time_ms - prev_tick) / 1000.f;
-					prev_tick = time_ms;
-					
-					// Get DC
-					HDC hdc = GetDC(msg.hwnd);
-					{
-						Graphics graphics(hdc);
-
-						graphBackBuffer->FillRectangle(&brushBlack, rectScreen);
-
-
-						//지도그리기
-						for (int ix = 0; ix < 8; ix++) {
-							for (int iy = 0; iy < 8; iy++) {
-								myGdiplusGame::drawTile(graphBackBuffer, 
-									&imgBasicTile, 
-									ix, iy ,
-									g_MapRoom1);
-							}
-						}
-
-						
-						graphBackBuffer->DrawImage(&imgPlayer, 
-							Rect((g_nPlayerXPos * 16) - 16 + 8, (g_nPlayerYPos * 16) -16 + 8, 32, 32),//대상위치 // - 16는 정중앙으로 그리고 +8은 타일 보정 뒤에 32 32는 총 크기
-							0, 64*2, 64, 64,//원본 위치
-							UnitPixel
-						);
-
-						graphics.ScaleTransform(2, 2);
-						graphics.DrawImage(&bmpMem, rectScreen);
-						graphics.ResetTransform();
-					}
-					ReleaseDC(msg.hwnd, hdc);
-				}
-				break;
-				default:
-					break;
-				}
-
-
-			}
-		}
-	}
-
-	//--------------------------------------
-	//gdi plus 종료코드 
-	GdiplusShutdown(gdiplusToken);
-	//--------------------------------------
-
-
-}
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -171,7 +45,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 	// 기본 메시지 루프입니다.
-	GDIPLUS_Loop(msg);
+
 
 
     return (int) msg.wParam;
@@ -243,32 +117,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+#include "../../engine/mywin32_engine.h"
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	
 	case WM_KEYDOWN:
 	{
-		switch (wParam) 
-		{
-		case VK_UP:
-			
-			if (g_nPlayerYPos >= 0) g_nPlayerYPos--;
-			
-			break;
-		case VK_DOWN:
-			if (g_nPlayerYPos < 7) g_nPlayerYPos++;
-			break;
-		case VK_LEFT:
-			if (g_nPlayerXPos > 0) g_nPlayerXPos--;
-			
-			break;
-		case VK_RIGHT:
-			if (g_nPlayerXPos < 7) g_nPlayerXPos++;
-			
-			break;
 
-		}
+	
+		
 	}
 		break;
     case WM_COMMAND:
@@ -278,7 +137,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wmId)
             {
 			case IDM_APP_START:
-				g_dwGdiLoopFsm = 10;
+				//g_dwGdiLoopFsm = 10;
+				break;
+			case IDM_GET_TILE:
+				
+				//mywin32_engine::util::OutputDebugformat(L"xpos : %d ypos : %d tile : %d\n", g_nPlayerXPos, g_nPlayerYPos, g_MapAttrBlock[(g_nPlayerYPos * 8) + g_nPlayerXPos]);
 				break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
