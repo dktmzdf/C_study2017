@@ -19,3 +19,4 @@ extern void SetMapIndex(S_GAMEMAP *pMap, int x, int y, int index);
 extern void DrawTile(S_GAMEMAP *pMap, Graphics *pGrp, int nPosX, int nPosY, int nTileIndex);
 extern void DrawMap(S_GAMEMAP *pMap, Graphics *pGrp, int xOrg, int yOrg);
 extern void SetTilePosition(S_GAMEMAP *pMap, int x, int y, int index);
+extern void DrawTilePalette(S_GAMEMAP *pMap, Graphics *pGrp, int xOrg, int yOrg);

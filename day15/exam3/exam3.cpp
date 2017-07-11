@@ -195,10 +195,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		swprintf(szBuf, L"%d ,%d \n", mx / g_GameMap.m_TileWidth, my / g_GameMap.m_TileHeight);
 		OutputDebugString(szBuf);
 
-		SetMapIndex(&g_GameMap,
-			mx / g_GameMap.m_TileWidth, my / g_GameMap.m_TileHeight,
-			g_nCurrentTileIndex);
-
+		if (mx < 128 && my < 128) 
+		{
+			SetMapIndex(&g_GameMap,
+				mx / g_GameMap.m_TileWidth, my / g_GameMap.m_TileHeight,
+				g_nCurrentTileIndex);
+		}
+		else if(my < 16 && mx > 144){
+			swprintf(szBuf, L"%d \n", mx / g_GameMap.m_TileWidth);
+			OutputDebugString(szBuf);
+			g_nCurrentTileIndex = (mx / g_GameMap.m_TileWidth) - 8;
+		}
 		InvalidateRect(hWnd, NULL, TRUE);
 	}
 		break;
@@ -210,6 +217,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Graphics grp(hdc);
 			//DrawTile(&g_GameMap,&grp, 0, 0, 1);
 			DrawMap(&g_GameMap,&grp,0,0);
+
+			Pen penBlack(Color(255,0, 0, 0));
+			grp.DrawRectangle(&penBlack,0,0,128,128);
+			DrawTilePalette(&g_GameMap, &grp, 9, 0);
+
+			grp.TranslateTransform(150, 45);//행렬계산 선대 확인
+			grp.ScaleTransform(3, 3);
+			
+			DrawTile(&g_GameMap, &grp, 0, 0, g_nCurrentTileIndex);//원점 기준으로 확대하기에 그림이 밀림
+			grp.ResetTransform();
 
             EndPaint(hWnd, &ps);
         }
@@ -312,7 +329,16 @@ INT_PTR CALLBACK procTileScriptDlg(HWND hDlg, UINT message, WPARAM wParam, LPARA
 				idx = _wtoi(token);
 				SetTilePosition(&g_GameMap, x, y, idx);
 			}
-
+			else if (!wcscmp(L"dtl", token))
+			{
+				int x, y, idx;
+				token = wcstok(NULL, L", ");
+				x = _wtoi(token);
+				token = wcstok(NULL, L", ");
+				y = _wtoi(token);
+				
+				//DrawTilePalette(&g_GameMap, &grp, x, y);
+			}
 			else {
 				MessageBox(hDlg, L"존재하지 않는 스크립트 입니다", L"", MB_OK);
 			}

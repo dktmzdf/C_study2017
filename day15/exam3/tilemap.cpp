@@ -59,3 +59,12 @@ void DrawMap(S_GAMEMAP *pMap,Graphics *pGrp, int xOrg, int yOrg)
 		}
 	}
 }
+
+
+void DrawTilePalette(S_GAMEMAP *pMap, Graphics *pGrp, int xOrg, int yOrg) 
+{
+	for (int i = 0; i < 256; i++) 
+	{
+		DrawTile(pMap, pGrp, xOrg + i, yOrg,i);
+	}
+}
