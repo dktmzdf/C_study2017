@@ -18,3 +18,4 @@ extern void InitMap(S_GAMEMAP *pMap, int width, int height, TCHAR *szImgFile, in
 extern void SetMapIndex(S_GAMEMAP *pMap, int x, int y, int index);
 extern void DrawTile(S_GAMEMAP *pMap, Graphics *pGrp, int nPosX, int nPosY, int nTileIndex);
 extern void DrawMap(S_GAMEMAP *pMap, Graphics *pGrp, int xOrg, int yOrg);
+extern void SetTilePosition(S_GAMEMAP *pMap, int x, int y, int index);
