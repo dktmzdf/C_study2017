@@ -167,6 +167,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // 메뉴 선택을 구문 분석합니다.
             switch (wmId)
             {
+			case IDM_SAVE:
+			{
+				FILE *fp;
+				fp = fopen("save.bin", "wb");
+
+				fwrite(&g_GameMap, sizeof(S_GAMEMAP), 1, fp);
+
+				fclose(fp);
+			}
+				break;
+			case IDM_LOAD:
+			{
+				FILE *fp;
+				fp = fopen("save.bin", "rb");
+				//Image *trash = new Image(L"../../res/loveable_rogue.png");
+				fread(&g_GameMap.m_nWidth, sizeof(int), 1, fp);
+				fread(&g_GameMap.m_nHeight, sizeof(int), 1, fp);
+				fread(&g_GameMap.m_Map, sizeof(int)*1024, 1, fp);
+				
+
+				fclose(fp);
+			}
+			break;
 			case IDM_SCRIPT:
 			{
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_SCRIPT), hWnd, procTileScriptDlg);
