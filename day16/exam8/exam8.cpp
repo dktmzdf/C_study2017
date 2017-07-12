@@ -122,7 +122,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 REAL g_fAngle;
+REAL g_fTopAngle;
+
 irr::core::vector2df g_vPosition;
+irr::core::vector2df g_vTopPosition;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -160,11 +163,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		
 			g_fAngle += 8.;
+			//g_fTopAngle += 8;
 		}
 		break;
 		case VK_LEFT:
 		{
 			g_fAngle -= 8.;
+			//g_fTopAngle -= 8;
+		}
+
+		break;
+		case 0x41:
+		{
+			g_fTopAngle -= 8.;
+		}
+
+		break;
+		case 0x44:
+		{
+			g_fTopAngle += 8.;
 		}
 
 		break;
@@ -210,10 +227,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				
 				grp.TranslateTransform(g_vPosition.X, g_vPosition.Y);
 				grp.RotateTransform(g_fAngle);
-
+				//body
 				grp.DrawRectangle(&pen,-20,-30,40,60);
+				//top
+				grp.RotateTransform(g_fTopAngle);
 				grp.DrawRectangle(&pen, -5, -15, 10, 20);
 				grp.DrawRectangle(&pen, -10, -10, 20, 20);
+				grp.ResetTransform();
 				grp.SetTransform(&oldMat);
 			}
 
