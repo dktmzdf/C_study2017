@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exam8", "exam8\exam8.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exam9", "exam9\exam9.vcxproj", "{52240945-3B7D-4AC0-9602-8EBD42F976FF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exam10", "exam10\exam10.vcxproj", "{F2D77829-A99C-4C8B-9792-4752E7EDC88B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +103,14 @@ Global
 		{52240945-3B7D-4AC0-9602-8EBD42F976FF}.Release|x64.Build.0 = Release|x64
 		{52240945-3B7D-4AC0-9602-8EBD42F976FF}.Release|x86.ActiveCfg = Release|Win32
 		{52240945-3B7D-4AC0-9602-8EBD42F976FF}.Release|x86.Build.0 = Release|Win32
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Debug|x64.ActiveCfg = Debug|x64
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Debug|x64.Build.0 = Debug|x64
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Debug|x86.ActiveCfg = Debug|Win32
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Debug|x86.Build.0 = Debug|Win32
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Release|x64.ActiveCfg = Release|x64
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Release|x64.Build.0 = Release|x64
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Release|x86.ActiveCfg = Release|Win32
+		{F2D77829-A99C-4C8B-9792-4752E7EDC88B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
