@@ -1,4 +1,4 @@
- // exam9_memo.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
+// exam9_memo.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
 
 #include "stdafx.h"
@@ -18,19 +18,11 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK procMemoIns(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK procMemoView(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-INT_PTR CALLBACK procMemoDel(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 #include "../../engine/mywin32_engine.h"
-#include "../../engine/utils.h"
-
-TCHAR *g_pszMemoList[1024];
-int g_nMemoCount;
-
-/*
 TCHAR g_szMemoDB[1024];
 int g_nMemoDBTailIndex = 0;
 HWND g_hOutputLogBox;
-*/
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -141,8 +133,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
 	case WM_CREATE:
-	{	
-		g_nMemoCount = 0;
+	{		
+		g_nMemoDBTailIndex = 0;
+		g_hOutputLogBox = mywin32_engine::makeTextBox(hWnd, 0, 0, 320, 240, 5001);
 	}
 		break;
     case WM_COMMAND:
@@ -154,44 +147,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case IDM_MEMO_INS:
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_INS), hWnd, procMemoIns);
 				break;
-			case IDM_DEL_INDEX:
-				DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_DEL), hWnd, procMemoDel);
+			case IDM_MEMO_DEL:
 				break;
-			case IDM_DEL_FRONT:
-			{
-				if (g_nMemoCount > 0) {
-					g_nMemoCount--;					
-					free(g_pszMemoList[0]);
-					for (int i = 1; i <= g_nMemoCount; i++) {						
-						g_pszMemoList[i - 1] = g_pszMemoList[i];						
-					}
-					g_pszMemoList[g_nMemoCount] = NULL;
-					//free(g_pszMemoList[g_nMemoCount]);
-				}
-
-			}
-				break;
-			case IDM_DEL_BACK: 
-				if (g_nMemoCount > 0) {
-					g_nMemoCount--;
-					
-					free(g_pszMemoList[g_nMemoCount]);
-					g_pszMemoList[g_nMemoCount] = NULL;
-
-				}
-				break;
-			
 			case IDM_MEMO_VIEW:
-				//DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_VIEW), hWnd, procMemoView);
-			{
-				for (int i = 0; i < g_nMemoCount; i++) {
-					win32_Printf(hWnd, L"%s", g_pszMemoList[i]);
-				}
-
-			}
-				break;
-			case IDM_LOG_CLEAR:
-				ClearLog(hWnd);
+				DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_VIEW), hWnd, procMemoView);
 				break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -208,19 +167,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-			DisplayLog(hdc);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
-
-	{
-		for (int i=0; i < g_nMemoCount; i++) {
-			free(g_pszMemoList[i]);
-		}
-	}
-
         PostQuitMessage(0);
         break;
     default:
@@ -262,12 +213,24 @@ INT_PTR CALLBACK procMemoIns(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
 		if (LOWORD(wParam) == IDOK )
 		{
 			TCHAR szBuf[256];
-			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_INS),szBuf,256);		
-			TCHAR *pMemo = (TCHAR *)malloc( (wcslen(szBuf)+1)*sizeof(TCHAR) );
-			wcscpy(pMemo, szBuf);
+			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_INS),szBuf,256);
 
-			g_pszMemoList[g_nMemoCount] = pMemo;
-			g_nMemoCount++;
+			
+			if (g_nMemoDBTailIndex > 0) {
+				g_szMemoDB[g_nMemoDBTailIndex++] = L',';
+			}
+			else {
+			}
+
+			int i = 0;
+			for (i = 0; szBuf[i] != 0x00; i++) {
+				g_szMemoDB[g_nMemoDBTailIndex++] = szBuf[i];
+			}
+			//g_szMemoDB[g_nMemoDBTailIndex + i] = L',';
+			//g_nMemoDBTailIndex += (i+1);
+
+			 
+			SetWindowText(g_hOutputLogBox, g_szMemoDB);
 
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
@@ -296,43 +259,45 @@ INT_PTR CALLBACK procMemoView(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			TCHAR szBuf[256];
 			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_SEL_INDEX), szBuf, 256);
 			int nSel = _wtoi(szBuf);
+			int i = 0;
 
+			TCHAR *ptrStart = g_szMemoDB;
 
+			if (nSel > 0) {
+				int nCount = 0;
+				
+				//while (g_szMemoDB[i] != 0x00) {
+				while (*ptrStart != 0x00) {
+					if (*ptrStart == L',') {
+						nCount++;
+					}
+					ptrStart++;
+					if (nCount == nSel) {
+						break;
+					}					
+				}
+				
+			}
+
+			TCHAR *ptrTarget = szBuf;
+			TCHAR *ptrSource = ptrStart; //시작위치 복사 
+			while (*ptrSource != 0x00 && *ptrSource != L',')
+			{	
+				//szBuf[j++] = g_szMemoDB[i++];
+				*ptrTarget = *ptrSource;
+				ptrTarget++;
+				ptrSource++;
+
+			}
+			*ptrTarget = 0x00;
+			//szBuf[j] = 0x00;
+
+			SetWindowText(g_hOutputLogBox, szBuf);
 
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
 		else if( LOWORD(wParam) == IDCANCEL) {
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)FALSE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
-}
-
-INT_PTR CALLBACK procMemoDel(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK)
-		{
-			TCHAR szBuf[256];
-			GetWindowText(GetDlgItem(hDlg, IDC_EDIT_DEL), szBuf, 256);
-			int nSel = _wtoi(szBuf);
-
-			//....
-
-
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		else if (LOWORD(wParam) == IDCANCEL) {
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)FALSE;
 		}
