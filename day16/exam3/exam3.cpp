@@ -160,9 +160,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			grp.GetTransform(&tempMat);
 			REAL matEm[16];
 			tempMat.GetElements(matEm);
-			grp.TranslateTransform(160, 120);
-			grp.GetTransform(&tempMat);
+			/*
+			1   0
+			0   1
+			160 120
+			*/
+			//행렬을 직접 대입
+			tempMat.SetElements(1,0,0,1,160,120);
+			grp.SetTransform(&tempMat);
+			//grp.TranslateTransform(160, 120);
+			//grp.GetTransform(&tempMat);
+
 			tempMat.GetElements(matEm);
+			grp.DrawLine(&pen, 0, 0, 50, 50);
+			/*
+			1   0
+			0   1
+			0 0
+			*/
+			grp.ResetTransform();
             EndPaint(hWnd, &ps);
         }
         break;
