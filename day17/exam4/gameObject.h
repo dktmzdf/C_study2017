@@ -6,6 +6,8 @@ struct GameObject
 	irr::f64 m_fRotation;
 	irr::f64 m_fSpeed;
 
+	//irr::core::vector2df 
+
 	Image *m_pImg;
 };
 
