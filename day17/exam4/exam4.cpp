@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
-	plusEngine::startUpGdiPlus();
+
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_EXAM4, szWindowClass, MAX_LOADSTRING);
@@ -42,19 +42,40 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    // 기본 메시지 루프입니다.
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-	plusEngine::CloseGdiPlus();
+    
+	plusEngine::GDIPLUS_Loop(msg, Rect(0,0,320, 240));
+	
     return (int) msg.wParam;
 }
 
+GameObject g_sObjMissile;
+
+void OnCreate(HWND hWnd)
+{
+	g_sObjMissile.m_fRotation = 0;
+	g_sObjMissile.m_fSpeed = 0;
+	g_sObjMissile.m_vPosition = irr::core::vector2df(0, 0);
+	g_sObjMissile.m_pImg = new Image(L"../../res/missile/spr_missile.png");
+}
+
+void OnApply(double fDelta)
+{
+	GameObject_Apply(&g_sObjMissile, fDelta);
+}
+
+void OnRender(double fDelta, Graphics *grp)
+{
+	grp->Clear(Color(200, 191, 231));
+	Pen pen(Color(0, 0, 0));
+	//화면 눈금표시 
+	grp->DrawLine(&pen, 0, 120, 320, 120);
+	grp->DrawLine(&pen, 160, 0, 160, 240);
+	grp->DrawRectangle(&pen, 0, 0, 320, 240);
+	grp->SetTransform(&Matrix(1, 0, 0, 1, 160, 120));
+
+	GameObject_Draw(&g_sObjMissile, *grp);
+	grp->ResetTransform();
+}
 
 
 //
@@ -125,12 +146,59 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		case VK_LEFT:
+		{
+			g_sObjMissile.m_fSpeed -= 0.5;
+		}
+		break;
+		case VK_RIGHT:
+		{
+			g_sObjMissile.m_fSpeed += 0.5;
+		}
+		break;
+		case VK_UP:
+		{
+			
+		}
+		break;
+		case VK_DOWN:
+		{
+			
+		}
+		break;
+		case 'A':
+		{
+			
+		}
+		break;
+		case 'S':
+		{
+			
+		}
+		break;
+		default:
+			break;
+		}
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // 메뉴 선택을 구문 분석합니다.
             switch (wmId)
             {
+			case IDM_START:
+			{
+				OnCreate(hWnd);
+				plusEngine::fpOnLoop = OnApply;
+				plusEngine::fpOnRender = OnRender;
+
+			}
+				break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
