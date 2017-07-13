@@ -124,6 +124,35 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 irr::core::vector2df g_vObjPos;
 irr::f64 g_fObjRotation;
 
+void drawObject(Graphics *grp, irr::core::vector2df *pObjPoly,Pen *pen,irr::core::vector2df pos,irr::f64 fRotation)
+{
+	//irr::core::vector2df *pObjPoly = testObjPoly1;
+
+	Matrix tempMat;
+	grp->GetTransform(&tempMat);
+	grp->TranslateTransform(pos.X, pos.Y);//내부적으로 계속 곱해짐
+	grp->RotateTransform(fRotation);
+
+	Matrix wMat;//현재값 구하기
+	grp->GetTransform(&wMat);
+	//wMat.Translate(-160, -120);
+
+	for (int i = 0; i < 4; i++)
+	{
+		irr::core::vector2df start = pObjPoly[i];
+
+		irr::core::vector2df end = pObjPoly[(i + 1) % 4];
+		grp->DrawLine(pen, start.X, start.Y, end.X, end.Y);
+
+		PointF _startX(start.X, start.Y);
+		wMat.TransformPoints(&_startX);
+
+		plusEngine::printf(grp, start.X, start.Y, L"(%.1lf,%.1lf)", _startX.X, _startX.Y);
+	}
+	grp->SetTransform(&tempMat);
+}
+
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -206,26 +235,95 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				irr::core::vector2df(-40,-20)
 				
 			};
+			
 
+			//대상 물체 그리기
+			irr::core::vector2df obj1_pos(-100, -100);
+			irr::f64 obj1_rot = 30;
+			drawObject(&grp, testObjPoly1, &pen, obj1_pos, obj1_rot);//obj1
+			drawObject(&grp, testObjPoly1, &pen, g_vObjPos, g_fObjRotation);//obj2
+			
 
+			irr::core::vector2df worldpos_obj1[4];
+			irr::core::vector2df worldpos_obj2[4];
+			
+			//obj1->world;
 			{
-				irr::core::vector2df *pObjPoly = testObjPoly1;
-				Matrix tempMat;
-				grp.GetTransform(&tempMat);
-				grp.TranslateTransform(g_vObjPos.X, g_vObjPos.Y);//내부적으로 계속 곱해짐
-				grp.RotateTransform(g_fObjRotation);
-
-				for (int i = 0; i < 4; i++) 
+				Matrix world_mat;
+				world_mat.Translate(obj1_pos.X, obj1_pos.Y);
+				world_mat.Rotate(obj1_rot);
+				for (int i = 0; i < 4; i++)
 				{
-					irr::core::vector2df start = testObjPoly1[i];
-					
-					irr::core::vector2df end = testObjPoly1[(i+1)%4];
-					grp.DrawLine(&pen, start.X,start.Y,end.X,end.Y);
-
-					plusEngine::printf(&grp, start.X, start.Y, L"(%.1lf,%.1lf)", start.X,start.Y);
+					PointF temp(testObjPoly1[i].X, testObjPoly1[i].Y);
+					world_mat.TransformPoints(&temp);
+					worldpos_obj1[i].X = temp.X;
+					worldpos_obj1[i].Y = temp.Y;
 				}
-				grp.SetTransform(&tempMat);
 			}
+			//obj2->world;
+			{
+				Matrix world_mat;
+				world_mat.Translate(g_vObjPos.X, g_vObjPos.Y);
+				world_mat.Rotate(g_fObjRotation);
+				for (int i = 0; i < 4; i++)
+				{
+					PointF temp(testObjPoly1[i].X, testObjPoly1[i].Y);
+					world_mat.TransformPoints(&temp);
+					worldpos_obj2[i].X = temp.X;
+					worldpos_obj2[i].Y = temp.Y;
+				}
+			}
+
+
+			
+			//충돌처리
+			//점처리
+			/*
+			{
+				irr::f32 result[4][4];
+				//모든 직선의 오른쪽에 있으면 안 왼쪽이면 밖 벡터의 외적과 내적 이용함
+				for (int i = 0; i < 4; i++) {
+					
+
+
+
+					for (int j = 0; j < 4; j++) {
+						irr::core::vector2df start = worldpos_obj1[j];
+						irr::core::vector2df end = worldpos_obj1[j + 1];
+						grp.DrawLine(&pen, start.X, start.Y, end.X, end.Y);
+						irr::core::line2df line1(start.X, start.Y, end.X, end.Y);
+						result[i][j] = line1.getPointOrientation(worldpos_obj2[i]);
+					}
+
+
+
+					if (result[i][0] < 0 && result[i][1] < 0 && result[i][2] < 0 && result[i][3] < 0) {
+						plusEngine::printf(&grp, worldpos_obj2[i].X, worldpos_obj2[i].Y, L"안");
+					}
+					//
+					else {
+						plusEngine::printf(&grp, worldpos_obj2[i].X, worldpos_obj2[i].Y, L"밖");
+					}
+				}
+			}*/
+			//irr::core::line2df line2(worldpos_obj2[i], worldpos_obj2[(i + 1) % 4]);
+			//선
+
+			for (int i = 0; i < 4; i++) {
+				irr::core::line2df line1(worldpos_obj2[i], worldpos_obj2[(i + 1) % 4]);
+				for (int j = 0; j < 4; j++) {
+					irr::core::line2df line2;
+					line2.setLine(worldpos_obj1[j], worldpos_obj1[(j + 1) % 4]);
+
+					irr::core::vector2df colPt;
+					if (line1.intersectWith(line2, colPt)) {
+						grp.DrawRectangle(&pen, colPt.X - 4, colPt.Y - 4, 8.0, 8.0);
+					}
+				}
+			}
+			
+			grp.ResetTransform();
+			
 
             EndPaint(hWnd, &ps);
         }
