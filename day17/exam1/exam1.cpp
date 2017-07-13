@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			grp.DrawRectangle(&pen, g_vTestPt.X - 4, g_vTestPt.Y - 4, 8.0, 8.0);
 			if (result > 0) {
-				plusEngine::printf(&grp, g_vTestPt.X, g_vTestPt.Y, L"오른쪽 %.1lf", result);
+				plusEngine::printf(&grp, g_vTestPt.X, g_vTestPt.Y, L"오른쪽 %.1lf", result);//내적과 외적으로 좌우 확인(거리도 확인)
 			}
 			else {
 				plusEngine::printf(&grp, g_vTestPt.X, g_vTestPt.Y, L"왼쪽 %.1lf", result);
