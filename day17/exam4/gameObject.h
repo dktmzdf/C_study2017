@@ -2,9 +2,12 @@
 
 struct GameObject
 {
+	//0이면 준비 10 날아가기, 20 죽음
+	int m_nFSM;
 	irr::core::vector2df m_vPosition;
 	irr::f64 m_fRotation;
 	irr::f64 m_fSpeed;
+	irr::f64 m_fFuel;
 
 	//irr::core::vector2df 
 

@@ -76,8 +76,14 @@ void OnApply(double fDelta)
 	{
 		if (g_sObjMissiles[i]) {
 			GameObject_Apply(g_sObjMissiles[i],fDelta);
+
+			if (g_sObjMissiles[i]->m_nFSM == 20) {
+				delete g_sObjMissiles[i];
+				g_sObjMissiles[i] = NULL;
+			}
 		}
 	}
+
 }
 
 void OnRender(double fDelta, Graphics *grp)
@@ -175,15 +181,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		int my = HIWORD(lParam);
 		//g_sObjMissile.m_vPosition.set(mx-160, my-120);
 
-		for (int i = 0; i<1024; i++)
-		{
+		for (int i = 0; i < 1024; i++) {
 			if (g_sObjMissiles[i] == NULL) {
 				GameObject *pObj = (GameObject *)malloc(sizeof(GameObject));
+				pObj->m_nFSM = 0;
 				pObj->m_pImg = g_pImgMissile;
 				pObj->m_fRotation = 0;
-				pObj->m_fSpeed = 1.0;
+				pObj->m_fSpeed = 10.0;
+				pObj->m_fFuel = 5;
 				pObj->m_vPosition = irr::core::vector2df(mx - 160, my - 120);
 				g_sObjMissiles[i] = pObj;
+
 				break;
 			}
 		}
