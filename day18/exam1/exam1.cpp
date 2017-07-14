@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//내적구하기
 		irr::f64 fDot = vTarget.dotProduct(_vTest);
 
-		plusEngine::printf(&grp, 20, -20, L"%lf", fDot);
+		plusEngine::printf(&grp, 20, -20, L"%lf, %lf", fDot,(acosf(fDot)/3.14) * 180);//cos 값 출력
 
 
 		grp.ResetTransform();
