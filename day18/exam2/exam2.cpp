@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
-
+	plusEngine::startUpGdiPlus();
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_EXAM2, szWindowClass, MAX_LOADSTRING);
@@ -51,7 +51,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
-
+	plusEngine::startUpGdiPlus();
     return (int) msg.wParam;
 }
 
@@ -147,6 +147,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+			Graphics grp(hdc);
+			Pen pen(Color(0, 0, 0));
+			grp.DrawRectangle(&pen, 0, 0, 320, 240);
+			grp.DrawLine(&pen, 0, 120, 320, 120);
+			grp.DrawLine(&pen, 160, 0, 160, 240);
+
+			Matrix orginMat(1, 0, 0, 1, 160, 120);
+			grp.SetTransform(&orginMat);
+
+			irr::core::vector3df vTest(100, 0, 0 );
+
+			Pen penRed(Color(255, 0, 0));
+			grp.DrawLine(&penRed,PointF(0,0),plusEngine::util::irr2Point(vTest));
+
+			irr::core::quaternion qt;
+			irr::core::quaternion qt1,qt2,qt3;
+
+			qt.set(0, 0, 45);
+			qt.getMatrix().transformVect(vTest);
+			grp.DrawLine(&pen,PointF(0,0),plusEngine::util::irr2Point(vTest));
+
+			qt1.set(0, 0, 0);
+			qt2.set(0, 0, 90);
+
+			qt3.slerp(qt1,qt2,0.5);
+
+			//qt = qt*qt2;
+			qt3.getMatrix().transformVect(vTest);
+			grp.DrawLine(&pen, PointF(0, 0), plusEngine::util::irr2Point(vTest));
+
+			grp.ResetTransform();
             EndPaint(hWnd, &ps);
         }
         break;
