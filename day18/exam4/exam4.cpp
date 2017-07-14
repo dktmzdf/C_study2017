@@ -43,7 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     
-	plusEngine::GDIPLUS_Loop(msg,Rect(0, 0, 640, 480));
+	plusEngine::GDIPLUS_Loop(msg,Rect(0, 0, 320, 240));
     return (int) msg.wParam;
 }
 
@@ -116,40 +116,23 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HANDLE hTimer;
-    switch (message)
-    {
+	switch (message)
+	{
+	case WM_KEYDOWN:
+		g_KeyStatus[wParam] = 1;
+		break;
+	case WM_KEYUP:
+		g_KeyStatus[wParam] = 0;
+		break;
 	case WM_CREATE:
-		hTimer = (HANDLE)SetTimer(hWnd, 0, 1000, NULL); //1초후에
+		hTimer = (HANDLE)SetTimer(hWnd, 1, 1000, NULL); //1초후에....
 		break;
 	case WM_TIMER:
-	{
 		OnCreate(hWnd);
-		KillTimer(hWnd,1);
-	}
-	break;
-	case WM_KEYDOWN:
-	{
-		switch (wParam)
-		{
-		case VK_LEFT:
-			//g_vTest += irr::core::vector2df(-1, 0);
-			break;
-		case VK_RIGHT:
-			//g_vTest += irr::core::vector2df(1, 0);
-			break;
-		case VK_UP:
-			//g_vTest += irr::core::vector2df(0, -1);
-			break;
-		case VK_DOWN:
-			//g_vTest += irr::core::vector2df(0, 1);
-			break;
+		KillTimer(hWnd, 1);
+		break;
+	
 
-		default:
-			break;
-		}
-		InvalidateRect(hWnd, NULL, TRUE);
-	}
-	break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -174,21 +157,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
 			
 
-			Graphics grp(hdc);
-			Pen pen(Color(0, 0, 0));
-			grp.DrawRectangle(&pen, 0, 0, 320, 240);
-			grp.DrawLine(&pen, 0, 120, 320, 120);
-			grp.DrawLine(&pen, 160, 0, 160, 240);
-
-			Matrix orginMat(1, 0, 0, 1, 160, 120);
-			grp.SetTransform(&orginMat);
+			
 
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
-        PostQuitMessage(0);
+	{	
+		OnDestory(hWnd);
+		PostQuitMessage(0);
+	}
         break;
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

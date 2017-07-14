@@ -21,5 +21,7 @@
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include "../../engine/irrlicht/include/irrlicht.h"
 #include "../../engine/plusEngine.h"
-#include "game.h"
+
 #include "ObjectPlayer.h"
+#include "ObjectBullet.h"
+#include "game.h"

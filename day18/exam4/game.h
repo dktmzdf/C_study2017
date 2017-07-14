@@ -1,5 +1,7 @@
 #pragma once
 
-extern void OnLoop(double fDelta);
-extern void OnRender(double fDelta, Graphics *pGrp);
+
 extern void OnCreate(HWND hWnd);
+extern void OnDestory(HWND hWnd);
+extern S_ObjectPlayer g_objPlayer;
+extern BYTE g_KeyStatus[256];
