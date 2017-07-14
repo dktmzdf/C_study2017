@@ -16,7 +16,7 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 		irr::f64 fDist = (pThis->m_vPosition - g_objPlayer.m_vPosition).getLength();
 
 		//총알크기 + 비행기 크기
-		if (fDist < (pThis->m_fSize + 12)) {
+		if (fDist < (pThis->m_fSize + 1)) {
 			AddEffectBulletDie(pThis->m_vPosition);
 			pThis->m_nFSM = 999;
 		}
@@ -54,7 +54,9 @@ void ObjectBullet_Setup(S_ObjectBullet *pThis, irr::core::vector2df &vStartPos,
 	pThis->m_fVelocity = fVelocity;
 	pThis->m_nFSM = 0; //ready
 	pThis->m_vPosition = vStartPos;
-	pThis->m_vDirection = vTaegetPos - vStartPos;
+	int nAcc= (rand() % 100);
+	if(nAcc % 2 == 0) pThis->m_vDirection = (vTaegetPos - vStartPos) + nAcc;
+	else if (nAcc % 2 != 0) pThis->m_vDirection = (vTaegetPos - vStartPos) - nAcc;
 	pThis->m_vDirection.normalize();
 	pThis->m_flifeTime = 0;
 }

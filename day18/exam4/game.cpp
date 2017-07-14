@@ -2,13 +2,28 @@
 
 HWND g_hWnd;
 
-#define MAX_BULLET_LIST 16
-#define MAX_EFFECT_BULLETDIE_LIST 16
+#define MAX_BULLET_LIST 256
+#define MAX_EFFECT_BULLETDIE_LIST 256
 
 BYTE g_KeyStatus[256];
 S_ObjectPlayer g_objPlayer;
 S_ObjectBullet *g_pBullet_List[MAX_BULLET_LIST];
 S_ObjectEffectBulletDie *g_pEffectBulletDie_List[MAX_EFFECT_BULLETDIE_LIST];
+
+double g_fTimer = 0;
+double g_fReload = 0.3;
+bool g_bCount = TRUE;
+
+irr::core::vector2df g_vLunchBullet[8] = {
+	irr::core::vector2df(0, -120),
+	irr::core::vector2df(0, 120),
+	irr::core::vector2df(320, 0),
+	irr::core::vector2df(-320, 0),
+	irr::core::vector2df(320, 120),
+	irr::core::vector2df(320, -120),
+	irr::core::vector2df(-320, 120),
+	irr::core::vector2df(-320, -120),
+};
 
 Image *g_pImgSpaceShip;
 
@@ -21,7 +36,7 @@ int AddBullet()
 	for (i = 0; i < MAX_BULLET_LIST; i++) {
 		if (g_pBullet_List[i] == NULL) {
 			S_ObjectBullet *ptr = (S_ObjectBullet *)malloc(sizeof(S_ObjectBullet));
-			ObjectBullet_Setup(ptr, irr::core::vector2df(0, -120), g_objPlayer.m_vPosition, 8, rand() % 50 + 20);
+			ObjectBullet_Setup(ptr, g_vLunchBullet[rand()%8], g_objPlayer.m_vPosition, 8, rand() % 50 + 50);
 			g_pBullet_List[i] = ptr;
 			return i;
 		}
@@ -74,13 +89,26 @@ void OnLoop(double fDelta)
 	if (fDelta < 0 || fDelta > 1.0) {
 		fDelta = 0;
 	}
+
 	//시체처리
 	ClearDeadBulletObj();
 	ClearDeadEffectBulletDieObj();
+	//타이머 관리
 
+	if (((int)g_fTimer % 5) == 0) 
+	{
+		if (g_fReload > 0.14 && g_bCount ==TRUE) 
+		{
+			g_fReload -= 0.05;
+			g_bCount = FALSE;
+		}
+	}
+	else {
+		g_bCount = TRUE;
+	}
 	//총알 발사
 	g_fAcctick += fDelta;
-	if (g_fAcctick > 3.0) {
+	if (g_fAcctick > g_fReload) {
 		g_fAcctick = 0.0;
 		AddBullet();
 	}
@@ -110,10 +138,13 @@ void OnRender(double fDelta, Graphics *pGrp)
 {
 	pGrp->Clear(Color(200, 191, 231));
 	if (fDelta > 0) {
+		g_fTimer += fDelta;
 		plusEngine::printf(pGrp, 0, 0, L"fps : %lf", 1.0 / fDelta);
+		plusEngine::printf(pGrp, 120, 0, L"timer : %lf", g_fTimer);
 	}
 	else {
 		plusEngine::printf(pGrp, 0, 0, L"fps : %lf", 1000.f);
+		plusEngine::printf(pGrp, 120, 0, L"timer : %lf", g_fTimer + fDelta);
 	}
 	Pen pen(Color(0, 0, 0));
 	//Pen pen2(Color(255, 0, 0));
@@ -126,7 +157,7 @@ void OnRender(double fDelta, Graphics *pGrp)
 
 	S_ObjectPlayer_OnRender(&g_objPlayer, pGrp);
 
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < MAX_BULLET_LIST; i++) {
 		S_ObjectBullet *ptr = g_pBullet_List[i];
 		if (ptr != NULL) {
 			ObjectBullet_OnRender(ptr, pGrp);
@@ -163,6 +194,7 @@ void OnCreate(HWND hWnd)
 	}
 
 	g_pImgSpaceShip = new Image(L"../../res/spaceship_crop.png");
+
 
 	S_ObjectPlayer_Setup(&g_objPlayer, irr::core::vector2df(0, 0), g_pImgSpaceShip);
 	//ObjectBullet_Setup(&g_TestBullet, irr::core::vector2df(-160, -120), g_objPlayer.m_vPosition, 8, 30);
