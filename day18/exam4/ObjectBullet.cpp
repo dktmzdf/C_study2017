@@ -3,7 +3,7 @@
 void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 {
 	pThis->m_flifeTime += fDelta;
-	
+
 	switch (pThis->m_nFSM)
 	{
 	case 0: // ready
@@ -12,24 +12,27 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 	case 10: //go
 	{
 		pThis->m_vPosition += pThis->m_vDirection*pThis->m_fVelocity*fDelta;
+
 		irr::f64 fDist = (pThis->m_vPosition - g_objPlayer.m_vPosition).getLength();
-		//총알 크기 + 비행기 크기
+
+		//총알크기 + 비행기 크기
 		if (fDist < (pThis->m_fSize + 12)) {
+			AddEffectBulletDie(pThis->m_vPosition);
 			pThis->m_nFSM = 999;
 		}
+		//라이프타임 검사 
 		if (pThis->m_flifeTime > 10) {
+
 			pThis->m_nFSM = 999;
 		}
 	}
-		break;
-	case 20: //go
-		
-		break;
+	break;
 	default:
 		break;
 	}
-	
-	
+
+
+
 }
 void ObjectBullet_OnRender(S_ObjectBullet *pThis, Graphics *pGrp)
 {
