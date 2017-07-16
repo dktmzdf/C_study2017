@@ -2,21 +2,21 @@
 
 void S_ObjectPlayer_OnApply(S_ObjectPlayer *pThis, double fDelta)
 {
+	if (pThis->m_nFSM !=999) {
+		if (g_KeyStatus[VK_LEFT]) {
+			pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(-1, 0);
+		}
+		if (g_KeyStatus[VK_RIGHT]) {
+			pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(1, 0);
+		}
 
-	if (g_KeyStatus[VK_LEFT]) {
-		pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(-1, 0);
+		if (g_KeyStatus[VK_UP]) {
+			pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(0, -1);
+		}
+		if (g_KeyStatus[VK_DOWN]) {
+			pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(0, 1);
+		}
 	}
-	if (g_KeyStatus[VK_RIGHT]) {
-		pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(1, 0);
-	}
-
-	if (g_KeyStatus[VK_UP]) {
-		pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(0, -1);
-	}
-	if (g_KeyStatus[VK_DOWN]) {
-		pThis->m_vPosition += fDelta * 100 * irr::core::vector2df(0, 1);
-	}
-
 }
 void S_ObjectPlayer_OnRender(S_ObjectPlayer *pThis, Graphics *pGrp)
 {
@@ -29,4 +29,10 @@ void S_ObjectPlayer_Setup(S_ObjectPlayer *pThis, irr::core::vector2df &startPos,
 	pThis->m_pImg = pImg;
 	pThis->m_vPosition = startPos;
 
+}
+void S_ObjectPlayer_OnDestory(S_ObjectPlayer *pThis)
+{
+	pThis->m_nFSM = 999;
+
+	
 }

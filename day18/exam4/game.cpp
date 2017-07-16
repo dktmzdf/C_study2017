@@ -9,6 +9,7 @@ BYTE g_KeyStatus[256];
 S_ObjectPlayer g_objPlayer;
 S_ObjectBullet *g_pBullet_List[MAX_BULLET_LIST];
 S_ObjectEffectBulletDie *g_pEffectBulletDie_List[MAX_EFFECT_BULLETDIE_LIST];
+S_ObjectEffectPlayerDie *g_pDestoryPlayer;
 
 double g_fTimer = 0;
 double g_fReload = 0.3;
@@ -45,18 +46,36 @@ int AddBullet()
 	return -1;
 }
 
+int AddEffectPlayerDie(irr::core::vector2df pos) {
+	g_objPlayer.m_nFSM = 999;
+	g_pDestoryPlayer = (S_ObjectEffectPlayerDie *)malloc(sizeof(S_ObjectEffectPlayerDie));
+	ObjectEffectPlayerDie_Setup(g_pDestoryPlayer, pos);
+	return 0;
+}
+
 int AddEffectBulletDie(irr::core::vector2df pos)
 {
 	int i;
 	for (i = 0; i < MAX_EFFECT_BULLETDIE_LIST; i++) {
 		if (g_pEffectBulletDie_List[i] == NULL) {
-			S_ObjectEffectBulletDie *ptr = (S_ObjectEffectBulletDie *)malloc(sizeof(S_ObjectEffectBulletDie));
-			ObjectEffectBulletDie_Setup(ptr, pos);
-			g_pEffectBulletDie_List[i] = ptr;
+			S_ObjectEffectBulletDie *ptrB = (S_ObjectEffectBulletDie *)malloc(sizeof(S_ObjectEffectBulletDie));
+			
+			ObjectEffectBulletDie_Setup(ptrB, pos);
+			
+			
+			g_pEffectBulletDie_List[i] = ptrB;
 			return i;
 		}
 	}
 	return -1;
+}
+
+void ClearDeadPlayerObj()
+{
+	if (g_pDestoryPlayer != NULL &&g_pDestoryPlayer->m_nFSM == 999) {
+		free(g_pDestoryPlayer);
+		g_pDestoryPlayer = NULL;
+	}
 }
 
 void ClearDeadBulletObj()
@@ -91,6 +110,7 @@ void OnLoop(double fDelta)
 	}
 
 	//시체처리
+	ClearDeadPlayerObj();
 	ClearDeadBulletObj();
 	ClearDeadEffectBulletDieObj();
 	//타이머 관리
@@ -114,7 +134,7 @@ void OnLoop(double fDelta)
 	}
 	//플레이어 처리
 	S_ObjectPlayer_OnApply(&g_objPlayer, fDelta);
-
+	
 	//총알 처리
 	for (int i = 0; i < MAX_BULLET_LIST; i++) {
 
@@ -132,13 +152,18 @@ void OnLoop(double fDelta)
 			ObjectEffectBulletDie_OnApply(ptr, fDelta);
 		}
 	}
+	if (g_pDestoryPlayer != NULL &&g_objPlayer.m_nFSM == 999)
+	{
+		ObjectEffectPlayerDie_OnApply(g_pDestoryPlayer, fDelta);
+	}
+	
 }
 
 void OnRender(double fDelta, Graphics *pGrp)
 {
 	pGrp->Clear(Color(200, 191, 231));
 	if (fDelta > 0) {
-		g_fTimer += fDelta;
+		if(g_objPlayer.m_nFSM != 999) g_fTimer += fDelta;
 		plusEngine::printf(pGrp, 0, 0, L"fps : %lf", 1.0 / fDelta);
 		plusEngine::printf(pGrp, 120, 0, L"timer : %lf", g_fTimer);
 	}
@@ -154,8 +179,9 @@ void OnRender(double fDelta, Graphics *pGrp)
 
 	Matrix originMat(1, 0, 0, 1, 160, 120);
 	pGrp->SetTransform(&originMat);
-
-	S_ObjectPlayer_OnRender(&g_objPlayer, pGrp);
+	if (g_objPlayer.m_nFSM != 999) {
+		S_ObjectPlayer_OnRender(&g_objPlayer, pGrp);
+	}
 
 	for (int i = 0; i < MAX_BULLET_LIST; i++) {
 		S_ObjectBullet *ptr = g_pBullet_List[i];
@@ -171,6 +197,11 @@ void OnRender(double fDelta, Graphics *pGrp)
 			ObjectEffectBulletDie_OnRender(ptr, pGrp);
 		}
 	}
+	if (g_pDestoryPlayer != NULL &&g_objPlayer.m_nFSM == 999)
+	{
+		ObjectEffectPlayerDie_OnRender(g_pDestoryPlayer,pGrp);
+	}
+
 
 	pGrp->ResetTransform();
 
@@ -201,7 +232,7 @@ void OnCreate(HWND hWnd)
 
 }
 
-void OnDestory(HWND hWnd)
+void OnDestory()
 {
 	delete g_pImgSpaceShip;
 
