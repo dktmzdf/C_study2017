@@ -43,7 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     
-	plusEngine::GDIPLUS_Loop(msg,Rect(0, 0, 320, 240));
+	plusEngine::GDIPLUS_Loop(msg,Rect(0, 0, 640, 480));
     return (int) msg.wParam;
 }
 

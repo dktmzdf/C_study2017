@@ -16,17 +16,18 @@ double g_fReload = 0.3;
 bool g_bCount = TRUE;
 
 irr::core::vector2df g_vLunchBullet[8] = {
-	irr::core::vector2df(0, -120),
-	irr::core::vector2df(0, 120),
-	irr::core::vector2df(320, 0),
-	irr::core::vector2df(-320, 0),
-	irr::core::vector2df(320, 120),
-	irr::core::vector2df(320, -120),
-	irr::core::vector2df(-320, 120),
-	irr::core::vector2df(-320, -120),
+	irr::core::vector2df(0, -480),
+	irr::core::vector2df(0, 480),
+	irr::core::vector2df(640, 0),
+	irr::core::vector2df(-640, 0),
+	irr::core::vector2df(640, 480),
+	irr::core::vector2df(640, -480),
+	irr::core::vector2df(-640, 480),
+	irr::core::vector2df(-640, -480),
 };
 
 Image *g_pImgSpaceShip;
+Image *g_pImgBullet;
 
 irr::f64 g_fAcctick = 0;
 
@@ -37,7 +38,7 @@ int AddBullet()
 	for (i = 0; i < MAX_BULLET_LIST; i++) {
 		if (g_pBullet_List[i] == NULL) {
 			S_ObjectBullet *ptr = (S_ObjectBullet *)malloc(sizeof(S_ObjectBullet));
-			ObjectBullet_Setup(ptr, g_vLunchBullet[rand()%8], g_objPlayer.m_vPosition, 8, rand() % 50 + 50);
+			ObjectBullet_Setup(ptr, g_vLunchBullet[rand()%8], g_objPlayer.m_vPosition, 8, rand() % 50 + 50, g_pImgBullet);
 			g_pBullet_List[i] = ptr;
 			return i;
 		}
@@ -45,7 +46,7 @@ int AddBullet()
 
 	return -1;
 }
-
+//플레이어 사망처리
 int AddEffectPlayerDie(irr::core::vector2df pos) {
 	g_objPlayer.m_nFSM = 999;
 	g_pDestoryPlayer = (S_ObjectEffectPlayerDie *)malloc(sizeof(S_ObjectEffectPlayerDie));
@@ -173,9 +174,9 @@ void OnRender(double fDelta, Graphics *pGrp)
 	}
 	Pen pen(Color(0, 0, 0));
 	//Pen pen2(Color(255, 0, 0));
-	pGrp->DrawRectangle(&pen, 0, 0, 320, 240);
-	pGrp->DrawLine(&pen, 0, 120, 320, 120);
-	pGrp->DrawLine(&pen, 160, 0, 160, 240);
+	pGrp->DrawRectangle(&pen, 0, 0, 640, 480);
+	//pGrp->DrawLine(&pen, 0, 120, 320, 120);
+	//pGrp->DrawLine(&pen, 160, 0, 160, 240);
 
 	Matrix originMat(1, 0, 0, 1, 160, 120);
 	pGrp->SetTransform(&originMat);
@@ -225,10 +226,11 @@ void OnCreate(HWND hWnd)
 	}
 
 	g_pImgSpaceShip = new Image(L"../../res/spaceship_crop.png");
+	g_pImgBullet = new Image(L"../../res/missile_crop.png");
 
 
 	S_ObjectPlayer_Setup(&g_objPlayer, irr::core::vector2df(0, 0), g_pImgSpaceShip);
-	//ObjectBullet_Setup(&g_TestBullet, irr::core::vector2df(-160, -120), g_objPlayer.m_vPosition, 8, 30);
+	
 
 }
 

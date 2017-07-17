@@ -23,7 +23,7 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 			
 		}
 		//라이프타임 검사 
-		if (pThis->m_flifeTime > 10) {
+		if (pThis->m_flifeTime > 30) {
 
 			pThis->m_nFSM = 999;
 		}
@@ -38,18 +38,21 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 }
 void ObjectBullet_OnRender(S_ObjectBullet *pThis, Graphics *pGrp)
 {
-	Pen pen(Color(0, 0, 0));
+	/*Pen pen(Color(0, 0, 0));
 	pGrp->DrawEllipse(&pen,
 		(int)(pThis->m_vPosition.X - pThis->m_fSize / 2.0),
 		(int)(pThis->m_vPosition.Y - pThis->m_fSize / 2.0),
 		pThis->m_fSize, pThis->m_fSize
-	);
-
+	);*/
+	pGrp->DrawImage(pThis->m_pImg, RectF(pThis->m_vPosition.X - 29 / 2, pThis->m_vPosition.Y - 29 / 2, 29, 29));
+//	pGrp->ScaleTransform(0.5, 0.5);
+	//pGrp->ResetTransform();
 }
 void ObjectBullet_Setup(S_ObjectBullet *pThis, irr::core::vector2df &vStartPos,
 	irr::core::vector2df &vTaegetPos,
 	irr::f64 fVolumeSize,
-	irr::f64 fVelocity
+	irr::f64 fVelocity,
+	Image *pImg
 )
 {
 	pThis->m_fSize = fVolumeSize;
@@ -61,4 +64,5 @@ void ObjectBullet_Setup(S_ObjectBullet *pThis, irr::core::vector2df &vStartPos,
 	else if (nAcc % 2 != 0) pThis->m_vDirection = (vTaegetPos - vStartPos) - nAcc;
 	pThis->m_vDirection.normalize();
 	pThis->m_flifeTime = 0;
+	pThis->m_pImg = pImg;
 }
