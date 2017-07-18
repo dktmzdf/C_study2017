@@ -22,7 +22,7 @@ void ObjectMissile_OnApply(S_ObjectMissile *pThis, double fDelta)
 		//irr::f64 fAngle = vRotation.getAngle();
 		//pThis->m_vDirection.rotateBy(-fAngle);
 		vRotation.normalize();
-		pThis->m_vDirection += vRotation * 0.01;
+		pThis->m_vDirection += vRotation * 0.03;
 		pThis->m_vDirection.normalize();
 		
 		pThis->m_vPosition += pThis->m_vDirection*(pThis->m_fVelocity*fDelta);
@@ -39,7 +39,7 @@ void ObjectMissile_OnApply(S_ObjectMissile *pThis, double fDelta)
 
 		}
 		//라이프타임 검사 
-		if (pThis->m_flifeTime > 5) {
+		if (pThis->m_flifeTime > 3) {
 
 			pThis->m_nFSM = 999;
 		}

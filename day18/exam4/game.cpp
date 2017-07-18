@@ -63,7 +63,7 @@ int AddMissile()
 		for (int i = 0; i < MAX_MISSILE_LIST; i++) {
 			if (g_pMissile_List[i] == NULL) {
 				S_ObjectMissile *ptr = (S_ObjectMissile *)malloc(sizeof(S_ObjectMissile));
-				ObjectMissile_Setup(ptr, g_vLunchBullet[rand() % 8], g_objPlayer.m_vPosition, 8, 250, g_pImgMissile);
+				ObjectMissile_Setup(ptr, g_vLunchBullet[rand() % 8], g_objPlayer.m_vPosition, 8, 400, g_pImgMissile);
 				g_pMissile_List[i] = ptr;
 				g_nCurrentMissle++;
 				return i;
@@ -159,7 +159,7 @@ void OnLoop(double fDelta)
 
 	if (((int)g_fTimer % 5) == 0) 
 	{
-		if (g_fReload > 0.14 && g_bCount ==TRUE) 
+		if (g_fReload > 0.24 && g_bCount ==TRUE) 
 		{
 			g_fReload -= 0.05;
 			g_nMissleLimit++;

@@ -170,6 +170,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		g_pImgMissile = new Image(L"../../res/missile/spr_missile.png");
 		g_vTarget.set(120, 0);
 		g_vMissilePos.set(0, 0);
+		SetTimer(hWnd, 1, 100, NULL);
 	}
 		break;
     case WM_PAINT:
@@ -196,7 +197,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				irr::f64 fAngle = vDir.getAngle();//atan로 목표와 미사일 사이의 각을 수함
 
 				grp.RotateTransform(-fAngle);
-				grp.DrawImage(g_pImgMissile, -32, -16, 64, 32);
+				grp.DrawImage(g_pImgMissile, g_vMissilePos.X - 32, g_vMissilePos.Y - 16, 64., 32.);
 
 				grp.SetTransform(&oldMat);
 			}
@@ -209,6 +210,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EndPaint(hWnd, &ps);
         }
         break;
+
+	break;
+	case WM_TIMER:
+	{
+		static int nCount = 0;
+		TCHAR szBuf[256];
+		wsprintf(szBuf, L"count : %d \n", nCount
+		);
+		OutputDebugString(szBuf);
+		irr::core::vector2df vDir = g_vTarget - g_vMissilePos;//미사일 벡터와 타켓 벡터 뺌
+		vDir.normalize();//단위 벡터 만들기
+		g_vMissilePos += vDir * 10;
+		
+		InvalidateRect(hWnd, NULL, TRUE);
+	}
+	break;
     case WM_DESTROY:
 		delete g_pImgMissile;
         PostQuitMessage(0);
