@@ -6,6 +6,7 @@ struct S_ObjectPlayer {
 	int m_nFSM;
 
 	Image *m_pImg;
+	Image *m_pDeadImg;
 
 };
 

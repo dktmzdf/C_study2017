@@ -23,7 +23,7 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 			
 		}
 		//라이프타임 검사 
-		if (pThis->m_flifeTime > 30) {
+		if (pThis->m_flifeTime > 25) {
 
 			pThis->m_nFSM = 999;
 		}
@@ -38,12 +38,7 @@ void ObjectBullet_OnApply(S_ObjectBullet *pThis, double fDelta)
 }
 void ObjectBullet_OnRender(S_ObjectBullet *pThis, Graphics *pGrp)
 {
-	/*Pen pen(Color(0, 0, 0));
-	pGrp->DrawEllipse(&pen,
-		(int)(pThis->m_vPosition.X - pThis->m_fSize / 2.0),
-		(int)(pThis->m_vPosition.Y - pThis->m_fSize / 2.0),
-		pThis->m_fSize, pThis->m_fSize
-	);*/
+	
 	pGrp->DrawImage(pThis->m_pImg, RectF(pThis->m_vPosition.X - 29 / 2, pThis->m_vPosition.Y - 29 / 2, 29, 29));
 //	pGrp->ScaleTransform(0.5, 0.5);
 	//pGrp->ResetTransform();

@@ -144,6 +144,7 @@
     <ClInclude Include="ObjectBullet.h" />
     <ClInclude Include="ObjectEffectBulletDie.h" />
     <ClInclude Include="ObjectEffectPlayerDie.h" />
+    <ClInclude Include="ObjectMissile.h" />
     <ClInclude Include="ObjectPlayer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="ObjectBullet.cpp" />
     <ClCompile Include="ObjectEffectBulletDie.cpp" />
     <ClCompile Include="ObjectEffectPlayerDie.cpp" />
+    <ClCompile Include="ObjectMissile.cpp" />
     <ClCompile Include="ObjectPlayer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -96,7 +96,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-
+   MoveWindow(hWnd, 0, 0, 660, 540, true);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
